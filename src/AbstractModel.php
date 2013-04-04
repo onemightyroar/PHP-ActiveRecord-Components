@@ -13,15 +13,15 @@ namespace OneMightyRoar\PHP_ActiveRecord_Components;
 use \ActiveRecord\Model;
 
 use \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
-use \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ReadOnlyAttributeException;
-
-use \OneMightyRoar\PHP_Redis_Transaction_Queue\TransactionClient;
 
 /**
  * AbstractModel
  *
  * Base model which all models should extend
  *
+ * @uses \ActiveRecord\Model
+ * @uses ModelInterface
+ * @abstract
  * @package OneMightyRoar\PHP_ActiveRecord_Components
  */
 abstract class AbstractModel extends Model implements ModelInterface {
@@ -42,8 +42,6 @@ abstract class AbstractModel extends Model implements ModelInterface {
 		'created_at',
 	);
 
-	protected $redis;
-
 
 	/**
 	 * Constructor
@@ -60,8 +58,6 @@ abstract class AbstractModel extends Model implements ModelInterface {
 
 		// Call our parent constructor AFTER we've merged our static attributes
 		parent::__construct( $attributes, $guard_attributes, $instantiating_via_find, $new_record );
-
-		$this->redis = new TransactionClient();
 	}
 
 	/**
@@ -134,7 +130,9 @@ abstract class AbstractModel extends Model implements ModelInterface {
 	}
 
 	/**
-	 * Save the model to the database and process any queued Redis commands to save in Redis as well.
+	 * Save the model to the database
+	 *
+	 * Check for any validation errors and throw an exception if errors exist
 	 *
 	 * @see \ActiveRecord\Model::save()
 	 * @param boolean $validate Set to true or false depending on if you want the validators to run or not
@@ -142,10 +140,8 @@ abstract class AbstractModel extends Model implements ModelInterface {
 	 */
 	public function save( $validate = true ) {
 		$success = parent::save( $validate );
-		if( $success ) {
-			// The save worked, so let's also save to redis.
-			$this->redis->process_queue();
-		} else {
+
+		if( !$success ) {
 			// Create a new exception and set our model validation error data
 			$validation_exception = new ActiveRecordValidationException();
 			$validation_exception->set_errors( $this->errors );
@@ -242,18 +238,6 @@ abstract class AbstractModel extends Model implements ModelInterface {
 	 */
 	protected function format_integer_attribute( $name ) {
 		return (int) $this->read_attribute( $name );
-	}
-
-	/**
-	 * Attempt to set the redis object
-	 *
-	 * The redis attribute is read-only, so an exception is thrown.
-	 *
-	 * @access public
-	 * @throws ReadOnlyAttributeException
-	 */
-	protected function set_redis() {
-		throw new ReadOnlyAttributeException( 'Redis attribute is read-only' );
 	}
 
 } // End class AbstractModel
