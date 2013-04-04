@@ -1,0 +1,30 @@
+{
+   "name": "onemightyroar/php-activerecord-components",
+   "description": "Useful common components for a php-activerecord based project",
+   "type": "library",
+   "keywords": ["activerecord", "orm", "database", "sql", "nosql", "redis"],
+   "homepage": "http://onemightyroar.com/",
+   "license": "MIT",
+   "authors": [
+      {
+         "name": "Trevor N. Suarez",
+         "email": "trevor@onemightyroar.com",
+         "homepage": "http://about.me/tnsuarez"
+      },
+      {
+         "name": "Brian C. Muse",
+         "email": "brian@onemightyroar.com",
+         "homepage": "http://brianmuse.com/"
+      }
+   ],
+   "require": {
+      "php": ">=5.3.0",
+      "php-activerecord/php-activerecord": "dev-master"
+   },
+   "suggest": {
+      "onemightyroar/php-redis-transaction-queue": "To make use of the AbstractRedisIntegrationModel"
+   },
+   "autoload": {
+      "psr-0": { "OneMightyRoar\\PHP_ActiveRecord_Components\\": "src/" }
+   }
+}
