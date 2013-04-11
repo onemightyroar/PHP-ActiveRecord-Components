@@ -19,5 +19,6 @@ use \LogicException;
  *
  * @package OneMightyRoar\PHP_ActiveRecord_Components\Exceptions
  */
-class ReadOnlyAttributeException extends LogicException {
+class ReadOnlyAttributeException extends LogicException
+{
 }

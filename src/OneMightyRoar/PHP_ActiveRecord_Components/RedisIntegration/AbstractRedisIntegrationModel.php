@@ -26,7 +26,8 @@ use \OneMightyRoar\PHP_Redis_Transaction_Queue\TransactionClient;
  * @abstract
  * @package
  */
-abstract class AbstractRedisIntegrationModel extends AbstractModel {
+abstract class AbstractRedisIntegrationModel extends AbstractModel
+{
 
     /**
      * The redis Transaction Client
@@ -47,9 +48,14 @@ abstract class AbstractRedisIntegrationModel extends AbstractModel {
      * @param boolean $instantiating_via_find
      * @param boolean $new_record
      */
-    public function __construct( array $attributes = array(), $guard_attributes = true, $instantiating_via_find = false, $new_record = true ) {
+    public function __construct(
+        array $attributes = array(),
+        $guard_attributes = true,
+        $instantiating_via_find = false,
+        $new_record = true
+    ) {
         // Call our parent constructor AFTER we've merged our static attributes
-        parent::__construct( $attributes, $guard_attributes, $instantiating_via_find, $new_record );
+        parent::__construct($attributes, $guard_attributes, $instantiating_via_find, $new_record);
 
         $this->redis = new TransactionClient();
     }
@@ -64,10 +70,11 @@ abstract class AbstractRedisIntegrationModel extends AbstractModel {
      * @param boolean $validate Set to true or false depending on if you want the validators to run or not
      * @return boolean True if the model was saved to the database otherwise false
      */
-    public function save( $validate = true ) {
-        $success = parent::save( $validate );
+    public function save($validate = true)
+    {
+        $success = parent::save($validate);
 
-        if( $success ) {
+        if ($success) {
             // The save worked, so let's also save to redis.
             $this->redis->process_queue();
         }
@@ -83,8 +90,8 @@ abstract class AbstractRedisIntegrationModel extends AbstractModel {
      * @access protected
      * @throws \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ReadOnlyAttributeException
      */
-    protected function set_redis() {
-        throw new ReadOnlyAttributeException( 'Redis attribute is read-only' );
+    protected function setRedis()
+    {
+        throw new ReadOnlyAttributeException('Redis attribute is read-only');
     }
-
-} // End class AbstractRedisIntegrationModel
+}

@@ -18,7 +18,8 @@ namespace OneMightyRoar\PHP_ActiveRecord_Components;
  * @see UpdatableModelInterface
  * @package OneMightyRoar\PHP_ActiveRecord_Components
  */
-trait UpdatableModelTrait {
+trait UpdatableModelTrait
+{
 
     /**
      * Safely update an entire model's properties
@@ -29,17 +30,17 @@ trait UpdatableModelTrait {
      * @access public
      * @return boolean
      */
-    public function update_profile( array $new_data, $auto_save = false ) {
+    public function updateProfile(array $new_data, $auto_save = false)
+    {
         // Strip all of the data that isn't a model attribute
-        $new_data = $this->filter_by_settable_attributes( $new_data );
+        $new_data = $this->filterBySettableAttributes($new_data);
 
-        $this->set_attributes( $new_data );
+        $this->set_attributes($new_data);
 
-        if ( $auto_save ) {
+        if ($auto_save) {
             return $this->save();
         }
 
         return true;
     }
-
-} // End trait UpdatableModelTrait
+}

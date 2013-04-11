@@ -19,7 +19,8 @@ namespace OneMightyRoar\PHP_ActiveRecord_Components;
  * @uses ModelInterface
  * @package OneMightyRoar\PHP_ActiveRecord_Components
  */
-interface UpdatableModelInterface extends ModelInterface {
+interface UpdatableModelInterface extends ModelInterface
+{
 
     /**
      * Safely update an entire model's properties
@@ -29,6 +30,5 @@ interface UpdatableModelInterface extends ModelInterface {
      * @access public
      * @return array
      */
-    public function update_profile( array $new_data, $auto_save = false );
-
-} // End interface UpdatableModelInterface
+    public function updateProfile(array $new_data, $auto_save = false);
+}

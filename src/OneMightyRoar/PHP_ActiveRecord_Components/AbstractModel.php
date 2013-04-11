@@ -24,10 +24,8 @@ use \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidation
  * @abstract
  * @package OneMightyRoar\PHP_ActiveRecord_Components
  */
-abstract class AbstractModel extends Model implements ModelInterface {
-
-    // Class properties
-    static $default_conditions = array();
+abstract class AbstractModel extends Model implements ModelInterface
+{
 
     /**
      * Blacklist of attributes that cannot be mass-assigned
@@ -37,7 +35,7 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @var array
      * @access public
      */
-    static $attr_protected = array(
+    public static $attr_protected = array(
         'updated_at',
         'created_at',
     );
@@ -53,11 +51,12 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @param boolean $instantiating_via_find
      * @param boolean $new_record
      */
-    public function __construct( array $attributes = array(), $guard_attributes = true, $instantiating_via_find = false, $new_record = true ) {
-        $this->merge_static_attributes( 'attr_protected' );
+    public function __construct(array $attributes = array(), $guard_attributes = true, $instantiating_via_find = false, $new_record = true)
+    {
+        $this->mergeStaticAttributes('attrProtected');
 
         // Call our parent constructor AFTER we've merged our static attributes
-        parent::__construct( $attributes, $guard_attributes, $instantiating_via_find, $new_record );
+        parent::__construct($attributes, $guard_attributes, $instantiating_via_find, $new_record);
     }
 
     /**
@@ -68,7 +67,8 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @access private
      * @return boolean
      */
-    final private function merge_static_attributes( $attribute_name ) {
+    final private function mergeStaticAttributes($attributeName)
+    {
         /**
          * These two attributes MAY be the same
          * (depends on how the child defines things, through late static binding)
@@ -78,7 +78,7 @@ abstract class AbstractModel extends Model implements ModelInterface {
         $child_attribute =& static::${ $attribute_name };
 
         // Did a child class actually set our attribute?
-        if ( $child_attribute !== $my_attribute ) {
+        if ($child_attribute !== $my_attribute) {
             return $child_attribute = array_merge(
                 $my_attribute,
                 $child_attribute
@@ -96,21 +96,23 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @access public
      * @return array
      */
-    final public function get_attribute_names( $only_settable = true ) {
-        if ( $only_settable ) {
+    final public function getAttributeNames($onlySettable = true)
+    {
+        if ($only_settable) {
             // If we've manually set which ones are accessible, just return that
-            if ( count( static::$attr_accessible ) > 0 ) {
+            if (count(static::$attr_accessible) > 0) {
                 return static::$attr_accessible;
-            }
-            else {
-                return array_keys( array_diff_key(
-                    $this->attributes(),
-                    array_flip( static::$attr_protected )
-                ));
+            } else {
+                return array_keys(
+                    array_diff_key(
+                        $this->attributes(),
+                        array_flip(static::$attr_protected)
+                    )
+                );
             }
         }
 
-        return array_keys( $this->attributes() );
+        return array_keys($this->attributes());
     }
 
     /**
@@ -122,10 +124,11 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @access public
      * @return array
      */
-    final public function filter_by_settable_attributes( array $attributes ) {
+    final public function filterBySettableAttributes(array $attributes)
+    {
         return array_intersect_key(
             $attributes,
-            array_flip( $this->get_attribute_names( true ) )
+            array_flip($this->getAttributeNames(true))
         );
     }
 
@@ -138,13 +141,14 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @param boolean $validate Set to true or false depending on if you want the validators to run or not
      * @return boolean True if the model was saved to the database otherwise false
      */
-    public function save( $validate = true ) {
-        $success = parent::save( $validate );
+    public function save($validate = true)
+    {
+        $success = parent::save($validate);
 
-        if( !$success ) {
+        if (!$success) {
             // Create a new exception and set our model validation error data
             $validation_exception = new ActiveRecordValidationException();
-            $validation_exception->set_errors( $this->errors );
+            $validation_exception->set_errors($this->errors);
 
             throw $validation_exception;
         }
@@ -162,9 +166,10 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @access public
      * @return array
      */
-    public function get_profile() {
+    public function getProfile()
+    {
         return $this->values_for(
-            $this->get_attribute_names( true )
+            $this->getAttributeNames(true)
         );
     }
 
@@ -175,36 +180,30 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @param string $name
      * @return mixed The value of the field
      */
-    public function &__get( $name ) {
+    public function &__get($name)
+    {
         // Check for getter
-        if ( method_exists( $this, "get_$name" ) )
-        {
+        if (method_exists($this, "get_$name")) {
             $name = "get_$name";
             $value = $this->$name();
 
             return $value;
-        }
-        // Is the name an "id"?
-        elseif ( $name === "id" ) {
-            $formatted_attribute = $this->format_integer_attribute( $name );
+        } elseif ($name === "id") { // Is the name an "id"?
+            $formatted_attribute = $this->formatIntegerAttribute($name);
 
             return $formatted_attribute;
-        }
-        // Does the name end with "_at"?
-        elseif ( Utils::ends_with( $name, '_at' ) ) {
-            $formatted_attribute = $this->format_time_attribute( $name );
+        } elseif (Utils::ends_with($name, '_at')) { // Does the name end with "_at"?
+            $formatted_attribute = $this->formatTimeAttribute($name);
 
             return $formatted_attribute;
-        }
-        // Does the name start with "is_"?
-        elseif ( Utils::starts_with( $name, 'is_' ) ) {
-            $formatted_attribute = $this->format_boolean_attribute( $name );
+        } elseif (Utils::starts_with($name, 'is_')) { // Does the name start with "is_"?
+            $formatted_attribute = $this->formatBooleanAttribute($name);
 
             return $formatted_attribute;
         }
 
         // Otherwise, just use our parent's magic getter
-        return parent::__get( $name );
+        return parent::__get($name);
     }
 
     /**
@@ -214,8 +213,9 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @param string $name
      * @return string The formatted time as a string
      */
-    protected function format_time_attribute( $name ) {
-        return (string) $this->read_attribute( $name );
+    protected function formatTimeAttribute($name)
+    {
+        return (string) $this->read_attribute($name);
     }
 
     /**
@@ -225,8 +225,9 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @param string $name
      * @return boolean The value of the boolean field
      */
-    protected function format_boolean_attribute( $name ) {
-        return (bool) $this->read_attribute( $name );
+    protected function formatBooleanAttribute($name)
+    {
+        return (bool) $this->read_attribute($name);
     }
 
     /**
@@ -236,8 +237,8 @@ abstract class AbstractModel extends Model implements ModelInterface {
      * @param string $name
      * @return integer The value of the integer field
      */
-    protected function format_integer_attribute( $name ) {
-        return (int) $this->read_attribute( $name );
+    protected function formatIntegerAttribute($name)
+    {
+        return (int) $this->read_attribute($name);
     }
-
-} // End class AbstractModel
+}
