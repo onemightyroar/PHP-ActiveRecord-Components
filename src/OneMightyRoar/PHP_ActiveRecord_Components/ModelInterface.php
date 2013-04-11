@@ -18,14 +18,14 @@ namespace OneMightyRoar\PHP_ActiveRecord_Components;
  *
  * @package OneMightyRoar\PHP_ActiveRecord_Components
  */
-interface ModelInterface {
+interface ModelInterface
+{
 
-	/**
-	 * Get a casted version of the object
-	 *
-	 * @access public
-	 * @return array
-	 */
-	public function get_profile();
-
-} // End interface ModelInterface
+    /**
+     * Get a casted version of the object
+     *
+     * @access public
+     * @return array
+     */
+    public function getProfile();
+}
