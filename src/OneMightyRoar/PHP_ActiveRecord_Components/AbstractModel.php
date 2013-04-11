@@ -51,9 +51,13 @@ abstract class AbstractModel extends Model implements ModelInterface
      * @param boolean $instantiating_via_find
      * @param boolean $new_record
      */
-    public function __construct(array $attributes = array(), $guard_attributes = true, $instantiating_via_find = false, $new_record = true)
-    {
-        $this->mergeStaticAttributes('attrProtected');
+    public function __construct(
+        array $attributes = array(),
+        $guard_attributes = true,
+        $instantiating_via_find = false,
+        $new_record = true
+    ) {
+        $this->mergeStaticAttributes('attr_protected');
 
         // Call our parent constructor AFTER we've merged our static attributes
         parent::__construct($attributes, $guard_attributes, $instantiating_via_find, $new_record);
@@ -67,15 +71,15 @@ abstract class AbstractModel extends Model implements ModelInterface
      * @access private
      * @return boolean
      */
-    final private function mergeStaticAttributes($attributeName)
+    final private function mergeStaticAttributes($attribute_name)
     {
         /**
          * These two attributes MAY be the same
          * (depends on how the child defines things, through late static binding)
          * (Get by reference)
          */
-        $my_attribute =& self::${ $attribute_name };
-        $child_attribute =& static::${ $attribute_name };
+        $my_attribute =& self::${$attribute_name};
+        $child_attribute =& static::${$attribute_name};
 
         // Did a child class actually set our attribute?
         if ($child_attribute !== $my_attribute) {
@@ -96,7 +100,7 @@ abstract class AbstractModel extends Model implements ModelInterface
      * @access public
      * @return array
      */
-    final public function getAttributeNames($onlySettable = true)
+    final public function getAttributeNames($only_settable = true)
     {
         if ($only_settable) {
             // If we've manually set which ones are accessible, just return that
@@ -148,7 +152,7 @@ abstract class AbstractModel extends Model implements ModelInterface
         if (!$success) {
             // Create a new exception and set our model validation error data
             $validation_exception = new ActiveRecordValidationException();
-            $validation_exception->set_errors($this->errors);
+            $validation_exception->setErrors($this->errors);
 
             throw $validation_exception;
         }
@@ -192,11 +196,11 @@ abstract class AbstractModel extends Model implements ModelInterface
             $formatted_attribute = $this->formatIntegerAttribute($name);
 
             return $formatted_attribute;
-        } elseif (Utils::ends_with($name, '_at')) { // Does the name end with "_at"?
+        } elseif (Utils::endsWith($name, '_at')) { // Does the name end with "_at"?
             $formatted_attribute = $this->formatTimeAttribute($name);
 
             return $formatted_attribute;
-        } elseif (Utils::starts_with($name, 'is_')) { // Does the name start with "is_"?
+        } elseif (Utils::startsWith($name, 'is_')) { // Does the name start with "is_"?
             $formatted_attribute = $this->formatBooleanAttribute($name);
 
             return $formatted_attribute;
