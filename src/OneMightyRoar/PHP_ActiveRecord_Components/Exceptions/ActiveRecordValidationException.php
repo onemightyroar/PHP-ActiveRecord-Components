@@ -76,4 +76,30 @@ class ActiveRecordValidationException extends UnexpectedValueException
     {
         return $this->errors = $errors;
     }
+
+    /**
+     * getErrors alias
+     *
+     * @deprecated Non PSR-2 compliant method name. Here for compatibility
+     * @param boolean $as_array
+     * @access public
+     * @return array
+     */
+    public function get_errors($as_array = false)
+    {
+        return $this->getErrors($as_array);
+    }
+
+    /**
+     * getErrors alias
+     *
+     * @deprecated Non PSR-2 compliant method name. Here for compatibility
+     * @param Errors $errors
+     * @access public
+     * @return array
+     */
+    public function set_errors(Errors $errors)
+    {
+        return $this->setErrors($errors);
+    }
 }
