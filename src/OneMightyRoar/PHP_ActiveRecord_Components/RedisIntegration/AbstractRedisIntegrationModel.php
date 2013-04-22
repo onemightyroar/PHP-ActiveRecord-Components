@@ -12,8 +12,7 @@ namespace OneMightyRoar\PHP_ActiveRecord_Components\RedisIntegration;
 
 use \OneMightyRoar\PHP_ActiveRecord_Components\AbstractModel;
 use \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ReadOnlyAttributeException;
-
-use \OneMightyRoar\PHP_Redis_Transaction_Queue\TransactionClient;
+use \OneMightyRoar\PredisToolkit\TransactionClient;
 
 /**
  * AbstractRedisIntegrationModel

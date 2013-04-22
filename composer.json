@@ -22,7 +22,7 @@
       "php-activerecord/php-activerecord": "dev-master"
    },
    "suggest": {
-      "onemightyroar/php-redis-transaction-queue": "To make use of the AbstractRedisIntegrationModel"
+      "onemightyroar/predis-toolkit": "To make use of the AbstractRedisIntegrationModel"
    },
    "autoload": {
       "psr-0": { "OneMightyRoar\\PHP_ActiveRecord_Components\\": "src/" }
