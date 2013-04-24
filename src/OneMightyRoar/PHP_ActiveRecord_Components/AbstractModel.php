@@ -28,6 +28,46 @@ abstract class AbstractModel extends Model implements ModelInterface
 {
 
     /**
+     * Class constants
+     */
+
+    /**
+     * The default limit of returned rows in a query
+     *
+     * @const int
+     */
+    const DEFAULT_LIMIT = 10;
+
+    /**
+     * The default row offset of multiple result queries
+     *
+     * @const int
+     */
+    const DEFAULT_OFFSET = 0;
+
+    /**
+     * The default column to order by
+     *
+     * @const string
+     */
+    const DEFAULT_ORDER_COL = 'id';
+
+    /**
+     * The default direction to order by
+     *
+     * DESC = descending
+     * ASC  = ascending
+     *
+     * @const string
+     */
+    const DEFAULT_ORDER_DIR = 'DESC';
+
+
+    /**
+     * Class properties
+     */
+
+    /**
      * Blacklist of attributes that cannot be mass-assigned
      *
      * @see \ActiveRecord\Model::attr_protected
@@ -40,6 +80,10 @@ abstract class AbstractModel extends Model implements ModelInterface
         'created_at',
     );
 
+
+    /**
+     * Methods
+     */
 
     /**
      * Constructor
@@ -175,6 +219,113 @@ abstract class AbstractModel extends Model implements ModelInterface
         return $this->values_for(
             $this->getAttributeNames(true)
         );
+    }
+
+    /**
+     * Build our paging options based on a passed array of raw
+     * options and/or possible aliases
+     *
+     * Any alias options will be overwritten if their respective ActiveRecord equivalents
+     * are passed directly
+     *
+     * @param array $paging_options The various paging options
+     *   @named int $per_page The amount of results to return per call, per page
+     *   @named string $order_col The column to order by
+     *   @named boolean $order_desc Whether to order in the descending direction
+     * @param int $page The page number to request
+     * @static
+     * @access public
+     * @return array An ActiveRecord compatible array holding query options related to paging
+     */
+    public static function buildPagingOptions(array $paging_options, $page = null)
+    {
+        // Get our master options (the raw ActiveRecord options, not aliases)
+        $order      = isset($paging_options['order'])   ? $paging_options['order']  : null;
+        $limit      = isset($paging_options['limit'])   ? $paging_options['limit']  : null;
+        $offset     = isset($paging_options['offset'])  ? $paging_options['offset'] : null;
+
+        $per_page   = isset($paging_options['per_page'])   ? (int) $paging_options['per_page']    : self::DEFAULT_LIMIT;
+
+        if (isset($paging_options['order_col'])) {
+            $order_col = $paging_options['order_col'];
+        } elseif (isset($paging_options['order_by'])) {
+            $order_col = $paging_options['order_by'];
+        } else {
+            $order_col = self::DEFAULT_ORDER_COL;
+        }
+
+        if (isset($paging_options['order_desc'])) {
+            $order_desc = $paging_options['order_desc'];
+        } elseif (isset($paging_options['order_descending'])) {
+            $order_desc = $paging_options['order_descending'];
+        } else {
+            $order_desc = null;
+        }
+
+        if (is_null($page)) {
+            $page   = isset($paging_options['page'])       ? (int) $paging_options['page']        : 1;
+        }
+
+        // Define our default order option
+        if (is_null($order)) {
+            if (is_null($order_desc)) {
+                $order_dir = self::DEFAULT_ORDER_DIR;
+            } else {
+                $order_desc = strcasecmp($order_desc, 'false') !== 0;
+                $order_dir = $order_desc ? 'DESC' : 'ASC';
+            }
+
+            $order = $order_col . ' ' . $order_dir;
+        }
+
+        if (is_null($limit)) {
+            $limit = $per_page;
+        }
+
+        if (is_null($offset)) {
+            if ($page <= 0) {
+                $page = 1;
+            }
+
+            $offset = (($page - 1) * $per_page) + self::DEFAULT_OFFSET;
+        }
+
+        // Define and return our query options array
+        return array(
+            'order'  => $order,
+            'limit'  => $limit,
+            'offset' => $offset,
+        );
+    }
+
+    /**
+     * Determine if the multiple result query has a next "page"
+     *
+     * This simply checks if there's at least one more row for
+     * an offset based on the past limit and offset
+     *
+     * @param array $orig_query_opts
+     * @static
+     * @access public
+     * @return boolean
+     */
+    public static function hasNextPage(array $orig_query_opts)
+    {
+        $original_limit  = isset($orig_query_opts['limit'])  ? $orig_query_opts['limit']  : self::DEFAULT_LIMIT;
+        $original_offset = isset($orig_query_opts['offset']) ? $orig_query_opts['offset'] : self::DEFAULT_OFFSET;
+
+        // Modify our original options
+        $options = array_merge(
+            $orig_query_opts,
+            array(
+                'limit' => 1, // We only care if there's at least one more result
+                'offset' => ($original_limit + $original_offset),
+            )
+        );
+
+        $number_of_results = count(static::all($options));
+
+        return ($number_of_results > 0);
     }
 
     /**
