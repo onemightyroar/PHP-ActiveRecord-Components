@@ -11,6 +11,7 @@
 namespace OneMightyRoar\PHP_ActiveRecord_Components;
 
 use \ActiveRecord\Model;
+use \ActiveRecord\Inflector;
 
 use \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
 
@@ -375,9 +376,17 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     public function &__get($name)
     {
+        // Camelize the name
+        $camelized_name = Inflector::instance()->camelize($name);
+
         // Check for getter
         if (method_exists($this, "get_$name")) {
             $name = "get_$name";
+            $value = $this->$name();
+
+            return $value;
+        } elseif (method_exists($this, "get$camelized_name")) {
+            $name = "get$camelized_name";
             $value = $this->$name();
 
             return $value;
@@ -397,6 +406,32 @@ abstract class AbstractModel extends Model implements ModelInterface
 
         // Otherwise, just use our parent's magic getter
         return parent::__get($name);
+    }
+
+    /**
+     * Set an attribute of the object
+     *
+     * @see \ActiveRecord\Model::__set()
+     * @param string $name
+     * @param mixed $value The value of the field
+     * @return mixed
+     */
+    public function __set($name, $value)
+    {
+        // Camelize the name
+        $camelized_name = Inflector::instance()->camelize($name);
+
+        // Check for setter
+        if (method_exists($this, "set_$name")) {
+            $name = "set_$name";
+            return $this->$name($value);
+        } elseif (method_exists($this, "set$camelized_name")) {
+            $name = "set$camelized_name";
+            return $this->$name($value);
+        }
+
+        // Otherwise, just use our parent's magic setter
+        return parent::__set($name, $value);
     }
 
     /**
