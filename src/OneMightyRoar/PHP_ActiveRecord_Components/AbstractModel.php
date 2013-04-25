@@ -80,6 +80,15 @@ abstract class AbstractModel extends Model implements ModelInterface
         'created_at',
     );
 
+    /**
+     * Default attribute values
+     *
+     * @static
+     * @var array
+     * @access protected
+     */
+    protected static $default_values = array();
+
 
     /**
      * Methods
@@ -202,6 +211,35 @@ abstract class AbstractModel extends Model implements ModelInterface
         }
 
         return $success;
+    }
+
+    /**
+     * Get the default values of the attributes, if there are any
+     * 
+     * @static
+     * @access public
+     * @return array
+     */
+    public static function getDefaultValues()
+    {
+        return static::$default_values;
+    }
+
+    /**
+     * Get the default value for a specific attribute, if there is any
+     *
+     * @param string $attribute_name The name of the attribute
+     * @static
+     * @access public
+     * @return mixed|null
+     */
+    public static function getDefaultValueFor($attribute_name)
+    {
+        if (isset(static::$default_values[$attribute_name])) {
+            return static::$default_values[$attribute_name];
+        }
+
+        return null;
     }
 
     /**
