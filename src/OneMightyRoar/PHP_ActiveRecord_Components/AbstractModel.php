@@ -12,6 +12,7 @@ namespace OneMightyRoar\PHP_ActiveRecord_Components;
 
 use \ActiveRecord\Model;
 use \ActiveRecord\Inflector;
+use \ActiveRecord\RecordNotFound;
 
 use \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
 
@@ -188,6 +189,50 @@ abstract class AbstractModel extends Model implements ModelInterface
             $attributes,
             array_flip($this->getAttributeNames(true))
         );
+    }
+
+    /**
+     * Assert that a result was valid/non-empty
+     *
+     * @param mixed $result
+     * @static
+     * @final
+     * @access public
+     * @throws \ActiveRecord\RecordNotFound If the result is empty/invalid
+     * @return boolean
+     */
+    final public static function assertResult($result)
+    {
+        if (empty($result)) {
+            throw new RecordNotFound();
+        }
+
+        return true;
+    }
+
+    /**
+     * Strict finder
+     *
+     * This finder simply runs a normal "find()" method, but
+     * throws a "RecordNotFound" exception if the result is empty
+     *
+     * NOTE: This method takes a variable number of args.
+     * See {@link \ActiveRecord\Model::find()} for more info
+     *
+     * @see \ActiveRecord\Model::find()
+     * @static
+     * @access public
+     * @throws \ActiveRecord\RecordNotFound If the result is empty/invalid
+     * @return mixed
+     */
+    public static function findStrict()
+    {
+        $result = call_user_func_array('static::find', func_get_args());
+
+        // Asser that we actually got a result
+        self::assertResult($result);
+
+        return $result;
     }
 
     /**
