@@ -149,7 +149,7 @@ abstract class AbstractModel extends Model implements ModelInterface
 
     /**
      * Get an array of all of the attribute names
-     * 
+     *
      * @param boolean $only_settable Flag of whether or not to only return the attributes that are mass-assignable
      * @final
      * @access public
@@ -177,7 +177,7 @@ abstract class AbstractModel extends Model implements ModelInterface
     /**
      * Filter a passed array of attributes by removing all of the keys that
      * either don't exist, aren't settable, or are protected from mass-assignment
-     * 
+     *
      * @param array $attributes
      * @final
      * @access public
@@ -261,7 +261,7 @@ abstract class AbstractModel extends Model implements ModelInterface
 
     /**
      * Get the default values of the attributes, if there are any
-     * 
+     *
      * @static
      * @access public
      * @return array
@@ -335,7 +335,14 @@ abstract class AbstractModel extends Model implements ModelInterface
         } elseif (isset($paging_options['order_by'])) {
             $order_col = $paging_options['order_by'];
         } else {
-            $order_col = self::DEFAULT_ORDER_COL;
+            $pk = static::table()->pk;
+            $order_col = isset($pk[0]) ? $pk[0] : self::DEFAULT_ORDER_COL;
+        }
+
+        // Let's make sure the table name is present so that this works when there are joins (no amgibuous columns)
+        if (strrpos($order_col, '.') === false) {
+            // Add table name and add ticks around order column to protect against reserved words
+            $order_col = static::table_name() . '.`' . $order_col . '`';
         }
 
         if (isset($paging_options['order_desc'])) {
@@ -347,7 +354,7 @@ abstract class AbstractModel extends Model implements ModelInterface
         }
 
         if (is_null($page)) {
-            $page   = isset($paging_options['page'])       ? (int) $paging_options['page']        : 1;
+            $page = isset($paging_options['page']) ? (int) $paging_options['page'] : 1;
         }
 
         // Define our default order option
@@ -360,6 +367,9 @@ abstract class AbstractModel extends Model implements ModelInterface
             }
 
             $order = $order_col . ' ' . $order_dir;
+        } else {
+            // Add ticks around the first word (eg. $order = 'id DESC' becomes '`id` DESC')
+            $order = preg_replace('/(?<=\>)\b\w*\b|^\w*\b/', '`$0`', $order);
         }
 
         if (is_null($limit)) {
