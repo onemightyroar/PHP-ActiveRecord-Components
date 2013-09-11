@@ -341,7 +341,7 @@ abstract class AbstractModel extends Model implements ModelInterface
         $limit      = isset($paging_options['limit'])   ? $paging_options['limit']  : null;
         $offset     = isset($paging_options['offset'])  ? $paging_options['offset'] : null;
 
-        $per_page   = isset($paging_options['per_page'])   ? (int) $paging_options['per_page']    : self::DEFAULT_LIMIT;
+        $per_page   = isset($paging_options['per_page']) ? (int) $paging_options['per_page'] : static::DEFAULT_LIMIT;
 
         if (isset($paging_options['order_col'])) {
             $order_col = $paging_options['order_col'];
@@ -349,9 +349,9 @@ abstract class AbstractModel extends Model implements ModelInterface
             $order_col = $paging_options['order_by'];
         } elseif ($extended) {
             $pk = static::table()->pk;
-            $order_col = isset($pk[0]) ? $pk[0] : self::DEFAULT_ORDER_COL;
+            $order_col = isset($pk[0]) ? $pk[0] : static::DEFAULT_ORDER_COL;
         } else {
-            $order_col = self::DEFAULT_ORDER_COL;
+            $order_col = static::DEFAULT_ORDER_COL;
         }
 
         // Let's make sure the table name is present so that this works when there are joins (no amgibuous columns)
@@ -375,7 +375,7 @@ abstract class AbstractModel extends Model implements ModelInterface
         // Define our default order option
         if (is_null($order)) {
             if (is_null($order_desc)) {
-                $order_dir = self::DEFAULT_ORDER_DIR;
+                $order_dir = static::DEFAULT_ORDER_DIR;
             } else {
                 $order_desc = strcasecmp($order_desc, 'false') !== 0;
                 $order_dir = $order_desc ? 'DESC' : 'ASC';
@@ -396,7 +396,7 @@ abstract class AbstractModel extends Model implements ModelInterface
                 $page = 1;
             }
 
-            $offset = (($page - 1) * $per_page) + self::DEFAULT_OFFSET;
+            $offset = (($page - 1) * $per_page) + static::DEFAULT_OFFSET;
         }
 
         // Define and return our query options array
@@ -420,8 +420,8 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     public static function hasNextPage(array $orig_query_opts)
     {
-        $original_limit  = isset($orig_query_opts['limit'])  ? $orig_query_opts['limit']  : self::DEFAULT_LIMIT;
-        $original_offset = isset($orig_query_opts['offset']) ? $orig_query_opts['offset'] : self::DEFAULT_OFFSET;
+        $original_limit  = isset($orig_query_opts['limit'])  ? $orig_query_opts['limit']  : static::DEFAULT_LIMIT;
+        $original_offset = isset($orig_query_opts['offset']) ? $orig_query_opts['offset'] : static::DEFAULT_OFFSET;
 
         // Modify our original options
         $options = array_merge(
