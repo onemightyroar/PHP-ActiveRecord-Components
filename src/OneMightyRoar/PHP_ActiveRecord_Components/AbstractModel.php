@@ -10,11 +10,11 @@
 
 namespace OneMightyRoar\PHP_ActiveRecord_Components;
 
-use \ActiveRecord\Model;
-use \ActiveRecord\Inflector;
-use \ActiveRecord\RecordNotFound;
-
-use \OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
+use ActiveRecord\Inflector;
+use ActiveRecord\Model;
+use ActiveRecord\RecordNotFound;
+use DateTime;
+use OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
 
 /**
  * AbstractModel
@@ -63,6 +63,16 @@ abstract class AbstractModel extends Model implements ModelInterface
      * @const string
      */
     const DEFAULT_ORDER_DIR = 'DESC';
+
+    /**
+     * The format to use when formatting dates or times
+     *
+     * Should conform to the PHP `date()` format spec:
+     * http://www.php.net/manual/en/function.date.php
+     *
+     * @const string
+     */
+    const DATE_TIME_FORMAT = DateTime::ISO8601;
 
 
     /**
@@ -488,7 +498,9 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     protected function formatTimeAttribute($name)
     {
-        return (string) $this->read_attribute($name);
+        $date_time = new DateTime($this->read_attribute($name));
+
+        return (string) $date_time->format(static::DATE_TIME_FORMAT);
     }
 
     /**
