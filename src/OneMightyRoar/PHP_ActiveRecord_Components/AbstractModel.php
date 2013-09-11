@@ -333,6 +333,9 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     public static function buildPagingOptions(array $paging_options, $page = null)
     {
+        // Let's see if this class was called by a child or not
+        $extended = (get_class() !== get_called_class());
+
         // Get our master options (the raw ActiveRecord options, not aliases)
         $order      = isset($paging_options['order'])   ? $paging_options['order']  : null;
         $limit      = isset($paging_options['limit'])   ? $paging_options['limit']  : null;
@@ -344,13 +347,15 @@ abstract class AbstractModel extends Model implements ModelInterface
             $order_col = $paging_options['order_col'];
         } elseif (isset($paging_options['order_by'])) {
             $order_col = $paging_options['order_by'];
-        } else {
+        } elseif ($extended) {
             $pk = static::table()->pk;
             $order_col = isset($pk[0]) ? $pk[0] : self::DEFAULT_ORDER_COL;
+        } else {
+            $order_col = self::DEFAULT_ORDER_COL;
         }
 
         // Let's make sure the table name is present so that this works when there are joins (no amgibuous columns)
-        if (strrpos($order_col, '.') === false) {
+        if ($extended && strrpos($order_col, '.') === false) {
             // Add table name and add ticks around order column to protect against reserved words
             $order_col = static::table_name() . '.`' . $order_col . '`';
         }
