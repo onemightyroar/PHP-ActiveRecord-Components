@@ -513,7 +513,13 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     protected function formatTimeAttribute($name)
     {
-        $date_time = new DateTime($this->read_attribute($name));
+        $read_date_time = $this->read_attribute($name);
+
+        if (empty($read_date_time)) {
+            return null;
+        }
+
+        $date_time = new DateTime($read_date_time);
 
         return (string) $date_time->format(static::DATE_TIME_FORMAT);
     }
