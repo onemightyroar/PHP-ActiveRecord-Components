@@ -325,8 +325,8 @@ abstract class AbstractModel extends Model implements ModelInterface
     /**
      * Get the name of the model that fits AR relational convention
      *
-     * @param Table $table
-     * @param boolean $quoted
+     * @param Table $table      Optionally injected Table instance
+     * @param boolean $quoted   Whether or not to quote escape the string with SQL-style quotes
      * @static
      * @access public
      * @return string
