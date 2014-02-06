@@ -358,6 +358,28 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Get the name of the primary key of the model
+     *
+     * @access public
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return $this->get_primary_key(true);
+    }
+
+    /**
+     * Get the value of the primary key of the model
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getKey()
+    {
+        return $this->{$this->getKeyName()};
+    }
+
+    /**
      * Build our paging options based on a passed array of raw
      * options and/or possible aliases
      *
