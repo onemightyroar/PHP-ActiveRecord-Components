@@ -16,7 +16,7 @@ use ActiveRecord\Model;
 use ActiveRecord\RecordNotFound;
 use ActiveRecord\SQLBuilder;
 use ActiveRecord\Table;
-use ActiveRecord\Utils;
+use ActiveRecord\Utils as ARUtils;
 use DateTime;
 use OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
 
@@ -337,7 +337,7 @@ abstract class AbstractModel extends Model implements ModelInterface
 
         $table_name = $table->get_fully_qualified_table_name($quoted);
 
-        return Utils::singularize($table_name);
+        return ARUtils::singularize($table_name);
     }
 
     /**
