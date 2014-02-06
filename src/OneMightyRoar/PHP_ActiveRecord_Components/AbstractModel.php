@@ -16,6 +16,7 @@ use ActiveRecord\Model;
 use ActiveRecord\RecordNotFound;
 use ActiveRecord\SQLBuilder;
 use ActiveRecord\Table;
+use ActiveRecord\Utils;
 use DateTime;
 use OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
 
@@ -319,6 +320,24 @@ abstract class AbstractModel extends Model implements ModelInterface
             $connection,
             $table->get_fully_qualified_table_name()
         );
+    }
+
+    /**
+     * Get the name of the model that fits AR relational convention
+     *
+     * @param Table $table
+     * @param boolean $quoted
+     * @static
+     * @access public
+     * @return string
+     */
+    public static function getConventionalRelationName(Table $table = null, $quoted = false)
+    {
+        $table = $table ?: static::table();
+
+        $table_name = $table->get_fully_qualified_table_name($quoted);
+
+        return Utils::singularize($table_name);
     }
 
     /**
