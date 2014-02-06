@@ -10,9 +10,12 @@
 
 namespace OneMightyRoar\PHP_ActiveRecord_Components;
 
+use ActiveRecord\Connection;
 use ActiveRecord\Inflector;
 use ActiveRecord\Model;
 use ActiveRecord\RecordNotFound;
+use ActiveRecord\SQLBuilder;
+use ActiveRecord\Table;
 use DateTime;
 use OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
 
@@ -296,6 +299,26 @@ abstract class AbstractModel extends Model implements ModelInterface
         }
 
         return null;
+    }
+
+    /**
+     * Get a SQL builder instance
+     *
+     * @param Connection $connection    Optionally injected DB connection
+     * @param Table $table              Optionally injected Table instance
+     * @static
+     * @access public
+     * @return SQLBuilder
+     */
+    public static function getSQLBuilder(Connection $connection = null, Table $table = null)
+    {
+        $connection = $connection ?: static::connection();
+        $table      = $table      ?: static::table();
+
+        return new SQLBuilder(
+            $connection,
+            $table->get_fully_qualified_table_name()
+        );
     }
 
     /**
