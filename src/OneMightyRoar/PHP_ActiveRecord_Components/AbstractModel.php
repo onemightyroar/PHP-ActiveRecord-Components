@@ -380,6 +380,34 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Get the table qualified key name
+     *
+     * @param Table $table      Optionally injected Table instance
+     * @param boolean $quoted   Whether or not to quote escape the string with SQL-style quotes
+     * @access public
+     * @return string
+     */
+    public function getQualifiedKeyName(Table $table = null, $quoted = false)
+    {
+        $table = $table ?: static::table();
+
+        // Get our table and key names
+        $table_name = $table->get_fully_qualified_table_name(false);
+        $key_name = $this->getKeyName();
+
+        if ($quoted) {
+            // Get our connection from our table
+            $connection = $table->conn;
+
+            // Quote escape our strings
+            $table_name = $connection->quote_name($table_name);
+            $key_name = $connection->quote_name($key_name);
+        }
+
+        return $table_name .'.'. $key_name;
+    }
+
+    /**
      * Build our paging options based on a passed array of raw
      * options and/or possible aliases
      *
