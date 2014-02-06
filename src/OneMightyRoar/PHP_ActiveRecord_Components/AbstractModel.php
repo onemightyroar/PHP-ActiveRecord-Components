@@ -10,9 +10,13 @@
 
 namespace OneMightyRoar\PHP_ActiveRecord_Components;
 
+use ActiveRecord\Connection;
 use ActiveRecord\Inflector;
 use ActiveRecord\Model;
 use ActiveRecord\RecordNotFound;
+use ActiveRecord\SQLBuilder;
+use ActiveRecord\Table;
+use ActiveRecord\Utils as ARUtils;
 use DateTime;
 use OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
 
@@ -299,6 +303,44 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Get a SQL builder instance
+     *
+     * @param Connection $connection    Optionally injected DB connection
+     * @param Table $table              Optionally injected Table instance
+     * @static
+     * @access public
+     * @return SQLBuilder
+     */
+    public static function getSQLBuilder(Connection $connection = null, Table $table = null)
+    {
+        $connection = $connection ?: static::connection();
+        $table      = $table      ?: static::table();
+
+        return new SQLBuilder(
+            $connection,
+            $table->get_fully_qualified_table_name()
+        );
+    }
+
+    /**
+     * Get the name of the model that fits AR relational convention
+     *
+     * @param Table $table      Optionally injected Table instance
+     * @param boolean $quoted   Whether or not to quote escape the string with SQL-style quotes
+     * @static
+     * @access public
+     * @return string
+     */
+    public static function getConventionalRelationName(Table $table = null, $quoted = false)
+    {
+        $table = $table ?: static::table();
+
+        $table_name = $table->get_fully_qualified_table_name($quoted);
+
+        return ARUtils::singularize($table_name);
+    }
+
+    /**
      * Implement a basic version of our interface's method
      *
      * Simply returns an array of all of the attributes (key/value pairs)
@@ -313,6 +355,56 @@ abstract class AbstractModel extends Model implements ModelInterface
         return $this->values_for(
             $this->getAttributeNames(true)
         );
+    }
+
+    /**
+     * Get the name of the primary key of the model
+     *
+     * @access public
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return $this->get_primary_key(true);
+    }
+
+    /**
+     * Get the value of the primary key of the model
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getKey()
+    {
+        return $this->{$this->getKeyName()};
+    }
+
+    /**
+     * Get the table qualified key name
+     *
+     * @param Table $table      Optionally injected Table instance
+     * @param boolean $quoted   Whether or not to quote escape the string with SQL-style quotes
+     * @access public
+     * @return string
+     */
+    public function getQualifiedKeyName(Table $table = null, $quoted = false)
+    {
+        $table = $table ?: static::table();
+
+        // Get our table and key names
+        $table_name = $table->get_fully_qualified_table_name(false);
+        $key_name = $this->getKeyName();
+
+        if ($quoted) {
+            // Get our connection from our table
+            $connection = $table->conn;
+
+            // Quote escape our strings
+            $table_name = $connection->quote_name($table_name);
+            $key_name = $connection->quote_name($key_name);
+        }
+
+        return $table_name .'.'. $key_name;
     }
 
     /**
