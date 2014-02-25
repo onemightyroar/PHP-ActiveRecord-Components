@@ -408,6 +408,48 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Check if a given model is a reference to the
+     * same ActiveRecord model by checking its model
+     * type and its primary key
+     *
+     * @param AbstractModel $model
+     * @access public
+     * @return boolean
+     */
+    public function isSameModel(AbstractModel $model)
+    {
+        if ($model->getKey() === $this->getKey()
+            && $model instanceof static) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a given model is equal to this model
+     * by checking if they refer to the same AR model
+     * and by checking if their attributes are equivalent
+     *
+     * @param AbstractModel $model
+     * @access public
+     * @return boolean
+     */
+    public function isEqual(AbstractModel $model)
+    {
+        // Check loose equality, since the attributes may
+        // contain objects instantiated at different times
+        if ($this->attributes() == $model->attributes()
+            && $this->isSameModel($model)) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Build our paging options based on a passed array of raw
      * options and/or possible aliases
      *
