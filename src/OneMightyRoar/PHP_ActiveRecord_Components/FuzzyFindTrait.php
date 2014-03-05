@@ -22,9 +22,10 @@ trait FuzzyFindTrait
 {
 
     /**
-     * Get by ID, or just return the instance itself
+     * Get strictly, or just return the instance itself
      *
      * @see FuzzyFindInterface::fuzzyFind()
+     * @see AbstractModel::findStrict()
      * @param mixed $reference
      * @static
      * @access public
@@ -37,7 +38,7 @@ trait FuzzyFindTrait
             return $reference;
         } else {
             // Try and get our model by ID
-            return static::find($reference);
+            return static::findStrict($reference);
         }
     }
 }
