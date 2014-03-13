@@ -19,6 +19,7 @@ use ActiveRecord\Table;
 use ActiveRecord\Utils as ARUtils;
 use DateTime;
 use OneMightyRoar\PHP_ActiveRecord_Components\Exceptions\ActiveRecordValidationException;
+use UnexpectedValueException;
 
 /**
  * AbstractModel
@@ -588,6 +589,61 @@ abstract class AbstractModel extends Model implements ModelInterface
         $number_of_results = count(static::all($options));
 
         return ($number_of_results > 0);
+    }
+
+    /**
+     * Get an array of models indexed by each model's given attribute
+     *
+     * This has a by-product of filtering out any elements in the array
+     * that aren't models, as indexing them would be impossible
+     *
+     * @param array $models          An array of models
+     * @param string $attribute_name The name of the attribute to index by
+     * @static
+     * @access public
+     * @throws \UnexpectedValueException If the given attribute name doesn't exist
+     * @return array
+     */
+    public static function indexModelArrayByAttribute(array $models, $attribute_name = null)
+    {
+        $reindexed_array = [];
+
+        foreach ($models as $model) {
+            // Only attempt if we have a model
+            if ($model instanceof static) {
+                // If we passed an attribute and it doesn't exist...
+                if (null !== $attribute_name) {
+                    if (!$model->isExistingAttribute($attribute_name)) {
+                        throw new UnexpectedValueException('The given attribute '. $attribute_name .' doesn\'t exist');
+                    }
+                } else {
+                    $attribute_name = $model->getKeyName();
+                }
+
+                // Get the value of the attribute
+                $attribute_value = $model->{$attribute_name};
+
+                $reindexed_array[$attribute_value] = $model;
+            }
+        }
+
+        return $reindexed_array;
+    }
+
+    /**
+     * Get an array of models indexed by each model's primary key
+     *
+     * Semantic alias of self::indexModelArrayByAttribute($models, null);
+     *
+     * @see self::indexModelArrayByAttribute()
+     * @param array $models An array of models
+     * @static
+     * @access public
+     * @return array
+     */
+    public static function indexModelArrayByKey(array $models)
+    {
+        return static::indexModelArrayByAttribute($models);
     }
 
     /**
