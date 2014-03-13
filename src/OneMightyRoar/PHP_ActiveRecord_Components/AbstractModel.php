@@ -450,6 +450,25 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Check if a given attribute exists on the model
+     *
+     * @param string $attribute_name   The name of the attribute to check
+     * @param boolean $include_aliases Whether or not to check against aliases too
+     * @access public
+     * @return boolean
+     */
+    public function isExistingAttribute($attribute_name, $include_aliases = true)
+    {
+        $attributes = $this->attributes();
+
+        if ($include_aliases) {
+            $attributes = array_merge($attributes, static::$alias_attribute);
+        }
+
+        return array_key_exists($attribute_name, $attributes);
+    }
+
+    /**
      * Build our paging options based on a passed array of raw
      * options and/or possible aliases
      *
