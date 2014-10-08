@@ -30,7 +30,7 @@ interface FuzzyKeyInterface extends FuzzyFindInterface
      *   matches the type of the key than the reference is directly returned.
      * @static
      * @access public
-     * @return int
+     * @return mixed
      */
     public static function fuzzyKey($reference);
 }
