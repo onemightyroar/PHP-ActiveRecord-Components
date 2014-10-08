@@ -39,7 +39,7 @@ trait FuzzyKeyTrait
     {
         $key_column = static::table()->columns[static::table()->pk[0]];
 
-        // If our is an int, just return it
+        // If our reference is the type of the primary key, return it.
         if (($key_column->type === Column::INTEGER && is_int($reference))
             || ($key_column->type === Column::STRING && is_string($reference))
             || ($key_column->type === Column::DECIMAL && is_numeric($reference))
