@@ -41,26 +41,4 @@ trait FuzzyFindTrait
             return static::findStrict($reference);
         }
     }
-
-    /**
-     * Get the model's ID from the reference
-     *
-     * This is essentially the inverse of fuzzyFind
-     *
-     * @param mixed $reference A generic reference. If an integer is
-     *   given it is assumed to be the model's ID.
-     * @static
-     * @access public
-     * @return int
-     */
-    public static function fuzzyId($reference)
-    {
-        // If our is an int, just return it
-        if (is_int($reference)) {
-            return $reference;
-        } else {
-            // Try and get our model and its ID
-            return static::fuzzyFind($reference)->id;
-        }
-    }
 }
