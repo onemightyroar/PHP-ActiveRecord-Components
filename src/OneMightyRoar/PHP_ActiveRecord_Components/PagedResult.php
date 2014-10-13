@@ -107,7 +107,8 @@ class PagedResult
      */
     public function setPage($page)
     {
-        if (is_null($page)) {
+        // Don't allow a zero'd or negative value
+        if (empty($page) || (int) $page < 1) {
             return false;
         }
 
