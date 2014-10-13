@@ -79,7 +79,7 @@ class PagedResult
      * @param array $paging_options
      * @access public
      */
-    public function __construct($data, $page, $has_next_page, $paging_options = null)
+    public function __construct(array $data, $page, $has_next_page, array $paging_options = [])
     {
         $this->setData($data);
         $this->setPage($page);
