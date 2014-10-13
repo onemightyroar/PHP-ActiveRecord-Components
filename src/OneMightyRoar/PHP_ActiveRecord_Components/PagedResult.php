@@ -244,21 +244,21 @@ class PagedResult
      */
     public function setPagingProperties(array $paging_properties)
     {
-        $mass_settable_properties = array(
-            'order',
-            'limit',
-            'offset',
+        $mass_settable_keys = array(
+            'order' => null,
+            'limit' => null,
+            'offset' => null,
         );
 
         // Drop the keys we don't want
         $props = array_intersect_key(
             $paging_properties,
-            array_flip($mass_settable_properties)
+            $mass_settable_keys
         );
 
         // Make sure there are no "unset" keys
         $props = array_merge(
-            array_flip($mass_settable_properties),
+            $mass_settable_keys,
             $props
         );
 
