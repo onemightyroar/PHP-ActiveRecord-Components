@@ -75,6 +75,7 @@ class PagedResult
      *
      * @param array $data
      * @param int $page
+     * @param bool $has_next_page
      * @param array $paging_options
      * @access public
      */
