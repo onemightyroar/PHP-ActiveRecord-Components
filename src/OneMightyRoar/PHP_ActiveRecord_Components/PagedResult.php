@@ -75,10 +75,11 @@ class PagedResult
      *
      * @param array $data
      * @param int $page
+     * @param bool $has_next_page
      * @param array $paging_options
      * @access public
      */
-    public function __construct($data, $page, $has_next_page, $paging_options = null)
+    public function __construct(array $data, $page, $has_next_page, array $paging_options = [])
     {
         $this->setData($data);
         $this->setPage($page);
@@ -106,7 +107,8 @@ class PagedResult
      */
     public function setPage($page)
     {
-        if (is_null($page)) {
+        // Don't allow a zero'd or negative value
+        if (empty($page) || (int) $page < 1) {
             return false;
         }
 
@@ -242,21 +244,21 @@ class PagedResult
      */
     public function setPagingProperties(array $paging_properties)
     {
-        $mass_settable_properties = array(
-            'order',
-            'limit',
-            'offset',
+        $mass_settable_keys = array(
+            'order' => null,
+            'limit' => null,
+            'offset' => null,
         );
 
         // Drop the keys we don't want
         $props = array_intersect_key(
             $paging_properties,
-            array_flip($mass_settable_properties)
+            $mass_settable_keys
         );
 
         // Make sure there are no "unset" keys
         $props = array_merge(
-            array_flip($mass_settable_properties),
+            $mass_settable_keys,
             $props
         );
 
