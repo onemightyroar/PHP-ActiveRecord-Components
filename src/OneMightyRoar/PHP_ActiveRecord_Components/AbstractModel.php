@@ -714,6 +714,24 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Determines if an attribute or relationship exists for this Model
+     *
+     * @see \ActiveRecord\Model::__isset()
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        if (parent::__isset($name)) {
+            return true;
+        }
+
+        $table = static::table();
+
+        return $table->has_relationship($name);
+    }
+
+    /**
      * Function to format time object attributes
      *
      * @access protected
