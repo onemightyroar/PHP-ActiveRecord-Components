@@ -261,18 +261,11 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     public function save($validate = true)
     {
-
-        if ($validate && $this->checkValidations()) {
-            // Create a new exception and set our model validation error data
-            $validation_exception = new ActiveRecordValidationException();
-            $validation_exception->setErrors($this->errors);
-
-            throw $validation_exception;
+        if ($validate) {
+            $this->checkValidations();
         }
 
-        $success = parent::save($validate);
-
-        return $success;
+        return parent::save($validate);
     }
 
     /**
