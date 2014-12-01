@@ -261,15 +261,16 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     public function save($validate = true)
     {
-        $success = parent::save($validate);
 
-        if (!$success) {
+        if ($validate && $this->checkValidations()) {
             // Create a new exception and set our model validation error data
             $validation_exception = new ActiveRecordValidationException();
             $validation_exception->setErrors($this->errors);
 
             throw $validation_exception;
         }
+
+        $success = parent::save($validate);
 
         return $success;
     }
@@ -773,5 +774,25 @@ abstract class AbstractModel extends Model implements ModelInterface
     protected function formatIntegerAttribute($name)
     {
         return (int) $this->read_attribute($name);
+    }
+
+    /**
+     * Check if the model conforms to all validations. If the model is not valid, then throw
+     * an exception.
+     *
+     * @throws ActiveRecordValidationException
+     * @return AbstractModel
+     */
+    public function checkValidations()
+    {
+        if ($this->is_invalid()) {
+            // Create a new exception and set our model validation error data
+            $validation_exception = new ActiveRecordValidationException();
+            $validation_exception->setErrors($this->errors);
+
+            throw $validation_exception;
+        }
+
+        return $this;
     }
 }
