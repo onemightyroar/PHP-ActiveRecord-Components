@@ -88,7 +88,7 @@ class ActiveRecordValidationException extends UnexpectedValueException
         Exception $previous = null
     ) {
         // Fall back to defaults
-        $message = (null !== $message) ? $message : static::DEFAULT_MESSAGE;
+        $message = $message ?: static::DEFAULT_MESSAGE;
 
         $exception = new static($message, $code, $previous);
 
