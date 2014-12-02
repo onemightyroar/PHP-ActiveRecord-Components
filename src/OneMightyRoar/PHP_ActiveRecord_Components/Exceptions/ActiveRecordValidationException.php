@@ -10,9 +10,10 @@
 
 namespace OneMightyRoar\PHP_ActiveRecord_Components\Exceptions;
 
-use \UnexpectedValueException;
-
-use \ActiveRecord\Errors;
+use ActiveRecord\Errors;
+use ActiveRecord\Model;
+use Exception;
+use UnexpectedValueException;
 
 /**
  * ActiveRecordValidationException
@@ -26,12 +27,28 @@ class ActiveRecordValidationException extends UnexpectedValueException
 {
 
     /**
-     * Default exception message
+     * Constants
+     */
+
+    /**
+     * The default exception message
+     *
+     * @const string
+     */
+    const DEFAULT_MESSAGE = 'The posted data did not pass validation';
+
+
+    /**
+     * Properties
+     */
+
+    /**
+     * Exception message
      *
      * @var string
      * @access protected
      */
-    protected $message = 'The posted data did not pass validation';
+    protected $message = self::DEFAULT_MESSAGE;
 
     /**
      * ActiveRecord errors object
@@ -41,6 +58,46 @@ class ActiveRecordValidationException extends UnexpectedValueException
      */
     protected $errors;
 
+
+    /**
+     * Methods
+     */
+
+    /**
+     * Create an instance using a validated model
+     *
+     * This static creation method is designed to allow for easier creation of
+     * this exception while ridding of the common boilerplate used in the
+     * majority of cases
+     *
+     * NOTE: This method is only useful if the passed model has gone through the
+     * validation process.
+     *
+     * @param Model $model
+     * @param string $message
+     * @param int $code
+     * @param Exception $previous
+     * @static
+     * @access public
+     * @return ActiveRecordValidationException
+     */
+    public static function createFromValidatedModel(
+        Model $model,
+        $message = null,
+        $code = null,
+        Exception $previous = null
+    ) {
+        // Fall back to defaults
+        $message = (null !== $message) ? $message : static::DEFAULT_MESSAGE;
+
+        $exception = new static($message, $code, $previous);
+
+        if (null !== $model->errors) {
+            $exception->setErrors($model->errors);
+        }
+
+        return $exception;
+    }
 
     /**
      * Returns the exception's "errors" property/attribute
