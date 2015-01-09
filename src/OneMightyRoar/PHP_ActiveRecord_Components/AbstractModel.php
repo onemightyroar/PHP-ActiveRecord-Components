@@ -106,6 +106,14 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     protected static $default_values = array();
 
+    /**
+     * Flag denoting the "freeze" state of the readonly property
+     *
+     * @var boolean
+     * @access private
+     */
+    private $readonly_frozen = false;
+
 
     /**
      * Methods
@@ -640,6 +648,38 @@ abstract class AbstractModel extends Model implements ModelInterface
     public static function indexModelArrayByKey(array $models)
     {
         return static::indexModelArrayByAttribute($models);
+    }
+
+    /**
+     * freezeAsReadonly
+     *
+     * @access public
+     * @return void
+     */
+    public function freezeAsReadonly()
+    {
+        // Set as readonly
+        $this->readonly(true);
+
+        // Freeze the attribute
+        $this->readonly_frozen = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param boolean $readonly Set to true to put the model into readonly mode
+     * @access public
+     * @return void
+     */
+    public function readonly($readonly = true)
+    {
+        // Don't allow them to change the readonly state if its frozen
+        if ($this->readonly_frozen) {
+            return;
+        }
+
+        parent::readonly($readonly);
     }
 
     /**
