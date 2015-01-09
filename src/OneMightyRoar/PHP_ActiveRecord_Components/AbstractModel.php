@@ -673,7 +673,7 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
-     * freezeAsReadonly
+     * Put the model in a readonly state permanently
      *
      * @access public
      * @return void
