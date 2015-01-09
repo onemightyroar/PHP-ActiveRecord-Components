@@ -683,6 +683,19 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * {@inheritdoc}
+     *
+     * This is a PSR-2 valid, camel-case style method alias
+     *
+     * @access public
+     * @return boolean
+     */
+    public function isReadonly()
+    {
+        return $this->is_readonly();
+    }
+
+    /**
      * Get an attribute of the object
      *
      * @see \ActiveRecord\Model::__get()
