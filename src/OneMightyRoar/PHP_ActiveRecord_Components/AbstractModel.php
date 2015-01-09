@@ -120,6 +120,28 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
 
     /**
+     * Create a new readonly model that can't be saved or changed
+     *
+     * This is a very convenient method for using models as true data/value-objects
+     * without having to worry about another service breaking contract and persisting
+     * the data represented by the model
+     *
+     * @see static::__construct()
+     * @see static::freezeAsReadonly()
+     * @param array $attributes
+     * @param mixed $guard_attributes
+     * @return AbstractModel
+     */
+    public static function createAsFrozenReadonly(array $attributes = array(), $guard_attributes = true)
+    {
+        $model = new static($attributes, $guard_attributes);
+
+        $model->freezeAsReadonly();
+
+        return $model;
+    }
+
+    /**
      * Constructor
      *
      * @see \ActiveRecord\Model::__construct()
