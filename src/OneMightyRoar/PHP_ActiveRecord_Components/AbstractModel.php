@@ -725,6 +725,7 @@ abstract class AbstractModel extends Model implements ModelInterface
      *
      * @param bool $always_validate Run validations, even if we already know that the model is invalid
      * @access public
+     * @throws ActiveRecordValidationException If the model has any validation errors
      * @return void
      */
     public function assertValid($always_validate = true)
