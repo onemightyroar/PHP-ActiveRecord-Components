@@ -718,6 +718,30 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Assert that a model is valid
+     *
+     * This will check if a model is valid, and will throw a validation exception
+     * if the model is found to have any validation errors
+     *
+     * @param bool $always_validate Run validations, even if we already know that the model is invalid
+     * @access public
+     * @throws ActiveRecordValidationException If the model has any validation errors
+     * @return void
+     */
+    public function assertValid($always_validate = true)
+    {
+        $valid = $this->errors->is_empty();
+
+        if ($valid || $always_validate) {
+            $valid = $this->is_valid();
+        }
+
+        if (!$valid) {
+            throw ActiveRecordValidationException::createFromValidatedModel($this);
+        }
+    }
+
+    /**
      * Get an attribute of the object
      *
      * @see \ActiveRecord\Model::__get()
