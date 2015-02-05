@@ -730,7 +730,7 @@ abstract class AbstractModel extends Model implements ModelInterface
      */
     public function assertValid($always_validate = true)
     {
-        $valid = $this->errors->is_empty();
+        $valid = (null !== $this->errors && $this->errors->is_empty());
 
         if ($valid || $always_validate) {
             $valid = $this->is_valid();
