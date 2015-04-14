@@ -609,6 +609,7 @@ abstract class AbstractModel extends Model implements ModelInterface
             array(
                 'limit' => 1, // We only care if there's at least one more result
                 'offset' => ($original_limit + $original_offset),
+                'include' => null, // No need to eager load everything again.
             )
         );
 
