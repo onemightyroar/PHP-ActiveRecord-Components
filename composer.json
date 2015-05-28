@@ -20,7 +20,7 @@
   "repositories": [
     {
       "type": "git",
-      "url":  "git@github.com:onemightyroar/php-activerecord.git"
+      "url":  "git@github.com:robinpowered/php-activerecord.git"
     }
   ],
    "require": {
