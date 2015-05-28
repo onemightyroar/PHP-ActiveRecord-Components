@@ -17,9 +17,15 @@
          "homepage": "http://brianmuse.com/"
       }
    ],
+  "repositories": [
+    {
+      "type": "git",
+      "url":  "git@github.com:onemightyroar/php-activerecord.git"
+    }
+  ],
    "require": {
       "php": ">=5.3.0",
-      "php-activerecord/php-activerecord": "1.1.x"
+      "onemightyroar/php-activerecord": "~1.1.0"
    },
    "suggest": {
       "onemightyroar/predis-toolkit": "To make use of the AbstractRedisIntegrationModel"
