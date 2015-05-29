@@ -17,6 +17,11 @@
          "homepage": "http://brianmuse.com/"
       }
    ],
+  "extra": {
+    "branch-alias": {
+      "dev-omr-dev": "1.0.x-dev"
+    }
+  },
   "repositories": [
     {
       "type": "git",
