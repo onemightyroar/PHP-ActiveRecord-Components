@@ -63,7 +63,7 @@ class CacheInitializer
 
         Cache::$options = [
             static::OPTION_KEY_NAMESPACE => (string) $namespace,
-            static::OPTION_KEY_EXPIRE => (int) $default_ttl ?: -1,
+            static::OPTION_KEY_EXPIRE => (int) $default_ttl,
         ];
     }
 }
