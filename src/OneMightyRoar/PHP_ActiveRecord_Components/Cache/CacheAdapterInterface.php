@@ -11,13 +11,13 @@
 namespace OneMightyRoar\PHP_ActiveRecord_Components\Cache;
 
 /**
- * CacheInterface
+ * CacheAdapterInterface
  *
  * An interface for the {@link \ActiveRecord\Cache} adapter
  *
  * @package OneMightyRoar\PHP_ActiveRecord_Components\Cache
  */
-interface CacheInterface
+interface CacheAdapterInterface
 {
 
     /**
