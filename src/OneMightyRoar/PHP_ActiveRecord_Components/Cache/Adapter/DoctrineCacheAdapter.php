@@ -32,7 +32,7 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
      * The default value for the option of whether or not to flush the namespace
      * instead of the entire cache for flush operations
      *
-     * @type bool
+     * @const bool
      */
     const FLUSH_NAMESPACE_DEFAULT = false;
 
@@ -44,7 +44,8 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
     /**
      * The Doctrine cache provider to be adapted
      *
-     * @type CacheProvider
+     * @var CacheProvider
+     * @access private
      */
     private $adapted_provider;
 
@@ -52,7 +53,8 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
      * Whether or not to flush the namespace instead of the entire cache when
      * committing a cache flush
      *
-     * @type bool
+     * @var bool
+     * @access protected
      */
     protected $flush_namespace = self::FLUSH_NAMESPACE_DEFAULT;
 

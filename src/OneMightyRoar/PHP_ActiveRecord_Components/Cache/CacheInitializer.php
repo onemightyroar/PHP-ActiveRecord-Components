@@ -30,14 +30,14 @@ class CacheInitializer
     /**
      * The option map key for the "namespace" option
      *
-     * @type string
+     * @const string
      */
     const OPTION_KEY_NAMESPACE = 'namespace';
 
     /**
      * The option map key for the "expire" option
      *
-     * @type string
+     * @const string
      */
     const OPTION_KEY_EXPIRE = 'expire';
 
@@ -55,6 +55,8 @@ class CacheInitializer
      * @param CacheAdapterInterface $adapter The adapter to use for the cache
      * @param string $namespace An optional namespace to prefix all cache keys with
      * @param int $default_ttl The default expiry/TTL, in seconds, for each cache entry
+     * @static
+     * @access public
      * @return void
      */
     public static function init(CacheAdapterInterface $adapter, $namespace = null, $default_ttl = null)
