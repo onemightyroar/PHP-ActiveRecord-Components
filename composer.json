@@ -21,8 +21,12 @@
       "php": ">=5.3.0",
       "php-activerecord/php-activerecord": "1.1.x"
    },
+   "require-dev": {
+      "doctrine/cache": "^1.4"
+   },
    "suggest": {
-      "onemightyroar/predis-toolkit": "To make use of the AbstractRedisIntegrationModel"
+      "onemightyroar/predis-toolkit": "To make use of the AbstractRedisIntegrationModel",
+      "doctrine/cache": "To easily implement ActiveRecord caching and the included adapter/translator"
    },
    "autoload": {
       "psr-0": { "OneMightyRoar\\PHP_ActiveRecord_Components\\": "src/" }
