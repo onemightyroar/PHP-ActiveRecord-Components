@@ -74,6 +74,17 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
     }
 
     /**
+     * Get the underlying adapted Doctrine cache provider
+     *
+     * @access public
+     * @return CacheProvider
+     */
+    public function getAdaptedCache()
+    {
+        return $this->adapted_provider;
+    }
+
+    /**
      * Get the value of flush_namespace
      *
      * @access public
