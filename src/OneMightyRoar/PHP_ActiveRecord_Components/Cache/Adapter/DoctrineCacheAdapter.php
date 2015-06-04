@@ -54,7 +54,7 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
      *
      * @type bool
      */
-    private $flush_namespace = self::FLUSH_NAMESPACE_DEFAULT;
+    protected $flush_namespace = self::FLUSH_NAMESPACE_DEFAULT;
 
 
     /**
@@ -82,20 +82,6 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
     public function getFlushNamespace()
     {
         return $this->flush_namespace;
-    }
-
-    /**
-     * Set the value of flush_namespace
-     *
-     * @param bool $flush_namespace
-     * @access public
-     * @return $this
-     */
-    public function setFlushNamespace($flush_namespace)
-    {
-        $this->flush_namespace = (bool) $flush_namespace;
-
-        return $this;
     }
 
     /**
