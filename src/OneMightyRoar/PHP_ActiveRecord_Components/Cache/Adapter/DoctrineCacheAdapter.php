@@ -120,7 +120,7 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
      */
     public function write($key, $value, $ttl = null)
     {
-        return $this->adapted_provider->save($key, $value, $ttl);
+        $this->adapted_provider->save($key, $value, $ttl);
     }
 
     /**
