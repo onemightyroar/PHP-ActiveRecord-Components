@@ -54,7 +54,7 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
      *
      * @type bool
      */
-    private $flush_namespace = false;
+    private $flush_namespace = self::FLUSH_NAMESPACE_DEFAULT;
 
 
     /**
@@ -65,6 +65,7 @@ class DoctrineCacheAdapter implements CacheAdapterInterface
      * Constructor
      *
      * @param CacheProvider $cache_provider The Doctrine cache provider to be adapted
+     * @param bool $flush_namespace Whether or not to flush the namespace (vs full) when commiting a cache flush
      */
     public function __construct(CacheProvider $cache_provider, $flush_namespace = self::FLUSH_NAMESPACE_DEFAULT)
     {
