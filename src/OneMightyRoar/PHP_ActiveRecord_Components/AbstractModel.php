@@ -674,6 +674,27 @@ abstract class AbstractModel extends Model implements ModelInterface
     }
 
     /**
+     * Escape a query parameter value containing wildcards
+     *
+     * Useful (and important) for when using a `LIKE` query, as not-escaping
+     * those queries would allow for a wildcard to be entered by a user and
+     * access every result.
+     *
+     * @param string $parameter_value The value to escape
+     * @static
+     * @access public
+     * @return string
+     */
+    public static function escapeParameterWildcards($parameter_value)
+    {
+        return str_replace(
+            ['%', '_'],
+            ['\%', '\_'],
+            $parameter_value
+        );
+    }
+
+    /**
      * Put the model in a readonly state permanently
      *
      * @access public
