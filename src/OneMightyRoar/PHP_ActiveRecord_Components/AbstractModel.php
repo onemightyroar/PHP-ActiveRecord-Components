@@ -579,11 +579,15 @@ abstract class AbstractModel extends Model implements ModelInterface
             $offset = (($page - 1) * $per_page) + static::DEFAULT_OFFSET;
         }
 
+        // Normalize our values to force a valid range
+        $limit = (int) $limit >= 1 ? $limit : static::DEFAULT_LIMIT;
+        $offset = (int) $offset > 0 ? $offset : static::DEFAULT_OFFSET;
+
         // Define and return our query options array
         return array(
             'order'  => $order,
-            'limit'  => $limit,
-            'offset' => $offset,
+            'limit'  => (int) $limit,
+            'offset' => (int) $offset,
         );
     }
 
