@@ -560,12 +560,19 @@ abstract class AbstractModel extends Model implements ModelInterface
                 $order_desc = strcasecmp($order_desc, 'false') !== 0;
                 $order_dir = $order_desc ? 'DESC' : 'ASC';
             }
-
-            $order = $order_col . ' ' . $order_dir;
         } else {
-            // Add ticks around the first word (eg. $order = 'id DESC' becomes '`id` DESC')
-            $order = preg_replace('/(?<=\>)\b\w*\b|^\w*\b/', '`$0`', $order);
+            $order_tokens = explode(' ', $order);
+            $order_col_input = $order_tokens[0];
+
+            // Ensure that the order direction is valid
+            $order_dir = (isset($order_tokens[1]) && preg_match('/(ASC|DESC)$/i', $order_tokens[1]))
+                ? $order_tokens[1] : static::DEFAULT_ORDER_DIR;
+            // Ensure the the column exists on the table
+            $order_col = array_key_exists($order_col_input, static::table()->columns)
+                ? static::connection()->quote_name($order_col_input) : static::DEFAULT_ORDER_COL;
         }
+
+        $order = $order_col . ' ' . $order_dir;
 
         if (is_null($limit)) {
             $limit = $per_page;
