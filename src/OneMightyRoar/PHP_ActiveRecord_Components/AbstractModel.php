@@ -562,10 +562,11 @@ abstract class AbstractModel extends Model implements ModelInterface
             }
         } else {
             $order_tokens = explode(' ', $order);
-            $order_col_input = $order_tokens[0];
+            $order_col_input = trim($order_tokens[0]);
+            $order_dir_input = isset($order_tokens[1]) ? trim($order_tokens[1]) : null;
 
             // Ensure that the order direction is valid
-            $order_dir = (isset($order_tokens[1]) && preg_match('/(ASC|DESC)$/i', $order_tokens[1]))
+            $order_dir = (preg_match('/(ASC|DESC)$/i', $order_dir_input))
                 ? $order_tokens[1] : static::DEFAULT_ORDER_DIR;
             // Ensure the the column exists on the table
             $order_col = array_key_exists($order_col_input, static::table()->columns)
