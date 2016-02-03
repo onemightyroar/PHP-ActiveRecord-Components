@@ -585,7 +585,8 @@ abstract class AbstractModel extends Model implements ModelInterface
 
         // If the order isn't stable, add a secondary order clause with a stable-ordered column
         if (!$stable_order) {
-            $order .= ', ' . $default_order_col . ' ' . $order_dir;
+            $stable_ordered_column = $quoted_table_name . '.' . static::connection()->quote_name($default_order_col);
+            $order .= ', ' . $stable_ordered_column . ' ' . $order_dir;
         }
 
         if (is_null($limit)) {
