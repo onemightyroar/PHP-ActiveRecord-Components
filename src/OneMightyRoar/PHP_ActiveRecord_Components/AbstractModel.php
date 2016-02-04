@@ -523,21 +523,19 @@ abstract class AbstractModel extends Model implements ModelInterface
 
         $per_page   = isset($paging_options['per_page']) ? (int) $paging_options['per_page'] : static::DEFAULT_LIMIT;
 
+        $quoted_table_name = static::connection()->quote_name(static::table_name());
+        $primary_keys = static::table()->pk;
+        $primary_primary_key = isset($primary_keys[0]) ? $primary_keys[0] : null;
+        $default_order_col = $primary_primary_key ?: static::DEFAULT_ORDER_COL;
+
         if (isset($paging_options['order_col'])) {
             $order_col = $paging_options['order_col'];
         } elseif (isset($paging_options['order_by'])) {
             $order_col = $paging_options['order_by'];
         } elseif ($extended) {
-            $pk = static::table()->pk;
-            $order_col = isset($pk[0]) ? $pk[0] : static::DEFAULT_ORDER_COL;
+            $order_col = $default_order_col;
         } else {
             $order_col = static::DEFAULT_ORDER_COL;
-        }
-
-        // Let's make sure the table name is present so that this works when there are joins (no amgibuous columns)
-        if ($extended && strrpos($order_col, '.') === false) {
-            // Add table name and add ticks around order column to protect against reserved words
-            $order_col = static::table_name() . '.`' . $order_col . '`';
         }
 
         if (isset($paging_options['order_desc'])) {
@@ -562,18 +560,34 @@ abstract class AbstractModel extends Model implements ModelInterface
             }
         } else {
             $order_tokens = explode(' ', $order);
-            $order_col_input = trim($order_tokens[0]);
+            $order_col = trim($order_tokens[0]);
+
             $order_dir_input = isset($order_tokens[1]) ? trim($order_tokens[1]) : null;
 
             // Ensure that the order direction is valid
             $order_dir = (preg_match('/(ASC|DESC)$/i', $order_dir_input))
-                ? $order_tokens[1] : static::DEFAULT_ORDER_DIR;
-            // Ensure the the column exists on the table
-            $order_col = array_key_exists($order_col_input, static::table()->columns)
-                ? static::connection()->quote_name($order_col_input) : static::DEFAULT_ORDER_COL;
+                ? $order_dir_input : static::DEFAULT_ORDER_DIR;
+        }
+
+        // Ensure the the column exists on the table
+        $order_col = array_key_exists($order_col, static::table()->columns) ? $order_col : $default_order_col;
+
+        // A boolean defining whether or not that a "stable" ordered (unique and natural) column is in the order clause
+        $stable_order = ($order_col === $primary_primary_key || $order_col === static::DEFAULT_ORDER_COL);
+
+        // Let's make sure the table name is present so that this works when there are joins (no amgibuous columns)
+        if (strrpos($order_col, '.') === false) {
+            // Add table name and add ticks around order column to protect against reserved words
+            $order_col = $quoted_table_name . '.' . static::connection()->quote_name($order_col);
         }
 
         $order = $order_col . ' ' . $order_dir;
+
+        // If the order isn't stable, add a secondary order clause with a stable-ordered column
+        if (!$stable_order) {
+            $stable_ordered_column = $quoted_table_name . '.' . static::connection()->quote_name($default_order_col);
+            $order .= ', ' . $stable_ordered_column . ' ' . $order_dir;
+        }
 
         if (is_null($limit)) {
             $limit = $per_page;
